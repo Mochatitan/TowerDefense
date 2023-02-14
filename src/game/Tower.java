@@ -21,7 +21,18 @@ public class Tower {
     protected Point pos;
     protected String imageFile;
 
-    protected void loadImage() {
+    protected Tower(Point gpos, String imageFile) {
+        // current position of the gear on the board grid
+        this.pos = gpos;
+        this.imageFile = imageFile;
+        // load the assets
+        loadImage();
+
+        // initialize the state
+        pos = gpos;
+    }
+
+    private void loadImage() {
         try {
             // you can use just the filename if the image file is in your
             // project folder, otherwise you need to provide the file path.
