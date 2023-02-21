@@ -1,11 +1,11 @@
-package game;
+package oldgame;
 
 import java.awt.*;
 
 class Cannon extends Tower {
 
     public Cannon(Point gpos) {
-        super(gpos, "src/images/scratch_cat.png");
+        super(gpos, "src/resources/scratch_cat.png");
     }
 
 }

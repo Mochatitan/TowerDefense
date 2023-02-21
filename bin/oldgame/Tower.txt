@@ -1,4 +1,4 @@
-package game;
+package oldgame;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -13,15 +13,15 @@ import java.awt.Point;
 abstract public class Tower {
 	/* instance variables */
 	protected Point position; // holds position of tower
-	protected Image tower; // holds tower image
-	protected int anchorX; // shifts X coordinate
-	protected int anchorY; // shifts Y coordinate
+	protected Image image; // holds tower image
+	// protected int anchorX; // shifts X coordinate
+	// protected int anchorY; // shifts Y coordinate
 	protected double timeSinceLastFire;// time since last effect was fired
-	protected int id; // id of the tower
+	protected int radius; // radius duh
 
 	public void draw(Graphics g) {
 		// Draws tower object to location specified by user
-		g.drawImage(tower, position.x + anchorX, position.y + anchorY, null);
+		g.drawImage(image, position.x - radius, position.y - radius, null);
 
 		// Draws dot on Enemy's (x, y) coordinates
 		// g.setColor(Color.WHITE);
@@ -30,14 +30,26 @@ abstract public class Tower {
 
 	/**
 	 * 
-	 * @param c
+	 * @param c coordinate
 	 */
-	public void setPosition(Point c) {
+	public void setPos(Point c) {
 		position = c;
 	}
 
-	abstract void interact(Game game, double deltaTime);
+	public void setPos(double x, double y) {
+		position = new Point((int) x, (int) y);
+	}
 
-	abstract void drawMaker(Graphics g);
+	public Point getPos() {
+		return position;
+	}
+
+	public double getX() {
+		return position.getX();
+	}
+
+	public double getY() {
+		return position.getY();
+	}
 
 }
