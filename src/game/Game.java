@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -69,9 +70,12 @@ public class Game implements Runnable {
     private int frameCounter; // keeps track of frame updates
     private long lastTime; // keeps track of time
 
-    private boolean placingBlackHole; // true if tower is being placed
+    private boolean placingBlackHole;
+    private boolean placingTower; // true if tower is being placed
     private Tower newBlackHole; // variable to hold new tower objects
     private double elapsedTime; // time trackers
+
+    private Tower newTower;
 
     private boolean placingSun; // true if tower is being placed
     private Tower newSun; // variable to hold new tower objects
@@ -296,8 +300,10 @@ public class Game implements Runnable {
         frameCounter++;
 
         // Place towers if user chooses
-        this.placeBlackHoles();
-        this.placeSuns();
+        // this.placeBlackHoles();
+        // this.placeSuns();
+        placeTowers(BlackHole::new);
+        placeTowers(Sun::new);
 
         if (livesCounter <= 0) {
             gameIsOver = true;
@@ -381,30 +387,7 @@ public class Game implements Runnable {
         g.drawString("Towers", 640, 240); // writes towers
         g.drawLine(620, 240, 780, 240); // underscore
 
-        // // draw box around blackhole icon
-        // g.setColor(new Color(224, 224, 224));
-        // g.fillRect(650, 250, 100, 100);
-
-        // // draw tower in menu area
-        // BlackHole blackhole = new BlackHole(new Point(700, 300));
-        // blackhole.draw(g);
         drawIcons(g);
-
-        // // draw box around sun icon
-        // g.setColor(new Color(224, 224, 224));
-        // g.fillRect(650, 400, 100, 100);
-
-        // // draw tower in menu area
-        // Sun sun = new Sun(new Point(700, 450));
-        // sun.draw(g);
-
-        // // draws blackhole object with mouse movements
-        // if (newBlackHole != null)
-        // newBlackHole.draw(g);
-
-        // // draws sun object with mouse movements
-        // if (newSun != null)
-        // newSun.draw(g);
 
         ImageLoader loader = ImageLoader.getLoader();
         Image endGame = loader.getImage("resources/game_over.png"); // load game over image
@@ -523,6 +506,37 @@ public class Game implements Runnable {
         // moves tower object with mouse movements
         if (newSun != null) {
             newSun.setPosition(mouseLocation);
+        }
+    }
+
+    private void placeTowers(Function<Point, Tower> towerBuilder) {
+        /* I need to make it so you can't place towers on path or off the screen */
+
+        // variable to hold mouse location
+        Point mousePosition = new Point(gamePanel.mouseX, gamePanel.mouseY);
+
+        // moves the tower object as mouse moves
+        if (gamePanel.mouseX > 650 && gamePanel.mouseX < 750 &&
+                gamePanel.mouseY > 400 && gamePanel.mouseY < 500 &&
+                gamePanel.mouseIsPressed && scoreCounter >= 300) { // if mouse is pressed on tower icon, create a new
+                                                                   // object
+            placingTower = true;
+            Tower newTower = towerBuilder.apply(mousePosition);
+        } else if (gamePanel.mouseX > 0 && gamePanel.mouseX < 600 &&
+                gamePanel.mouseY > 0 && gamePanel.mouseY < 600 &&
+                gamePanel.mouseIsPressed && placingSun
+                && line.distanceToPath(gamePanel.mouseX, gamePanel.mouseY) > 60) { // if mouse is pressed on game
+                                                                                   // screen, place tower on game screen
+            newSun.setPosition(mousePosition);
+            towers.add(new Sun(mousePosition));
+            scoreCounter -= 300;
+            newSun = null;
+            placingSun = false;
+        }
+
+        // moves tower object with mouse movements
+        if (newSun != null) {
+            newSun.setPosition(mousePosition);
         }
     }
 
